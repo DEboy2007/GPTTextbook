@@ -3,6 +3,7 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
+
 h1 {
     margin: auto;
     display: flex;
@@ -51,15 +52,14 @@ textarea {
     font-size: 3em;
     color:black;
     border:none;
-
 }
 
 .answer {
-    width: 75%;
-    height: 80%;
+    width:821.25px;
+    height:252px;
     margin: auto;
     display: flex;
     justify-content: center;
     font-size: 1.5em;
-    color:white;
+    color:black;
 }
