@@ -16,30 +16,32 @@ const Service = () => {
     const formRef = React.createRef();
 
     return (
-        <div classname="container">
-            <div>
-                <h1>GPT Textbook</h1>
-                <p>Select your textbook and type your prompt below</p>
+        <>
+            <div className="container">
+                <div>
+                    <h1>GPT Textbook</h1>
+                    <p>Select your textbook and type your prompt below</p>
+                </div>
+                <br />
+                <div className="question">
+                    <form ref={formRef} onSubmit={handleSubmit}>
+                        <select name="textbook" id="textbook">
+                            <option value="select">Textbook</option>
+                            <option value="euro">AP European History</option>
+                        </select>
+                        <br /> <br />
+                        <textarea placeholder="Question">
+                        </textarea>
+                        <br />
+                        <input className="submit" type="submit" value="Ask" />
+                    </form>
+                </div>
+                <br />
+                <div>
+                    <textarea value={answer} readOnly={true} className='answer' />
+                </div>
             </div>
-            <br />
-            <div className="question">
-                <form ref={formRef} onSubmit={handleSubmit}>
-                    <select name="textbook" id="textbook">
-                        <option value="select">Textbook</option>
-                        <option value="euro">AP European History</option>
-                    </select>
-                    <br /> <br />
-                    <textarea placeholder="Question">
-                    </textarea>
-                    <br />
-                    <input className="submit" type="submit" value="Ask" />
-                </form>
-            </div>
-            <br />
-            <div>
-                <textarea value={answer} readOnly={true} className='answer' />
-            </div>
-        </div>
+        </>
     )
 }
 
