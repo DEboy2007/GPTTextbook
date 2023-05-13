@@ -31,7 +31,6 @@ const Service = () => {
             console.log(error);
             setAnswer("Unfortunately, the API encountered an error. We apologize for the inconvenience, please try again!")
         }
-
     }
 
     const handleSubmit = (event) => {

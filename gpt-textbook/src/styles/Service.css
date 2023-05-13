@@ -27,6 +27,7 @@ select {
     border-radius: 0.25em;  
 }
 
+
 textarea {
     background: #9EB3C2;
     width: 75%;
@@ -37,6 +38,7 @@ textarea {
     resize: none;    
 }
 
+/* To-do: Make answer red or some other color */
 .submit {
     width: 30%;
     height: 15%;
