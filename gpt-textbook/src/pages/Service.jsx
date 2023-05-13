@@ -3,14 +3,44 @@ import '../styles/Service.css';
 import { useState } from 'react';
 
 const Service = () => {
-    // Replace with state later to give actual answer
-    const [answer, setAnswer] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec varius sit amet risus a viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In a ultricies est. Nulla interdum tincidunt venenatis. Suspendisse a lectus sed odio sodales molestie. Etiam vitae leo neque. Curabitur vitae ligula eget felis mattis molestie. Donec tincidunt, nulla at consectetur aliquet, lectus dui bibendum orci, sit amet congue ante lectus sit amet tellus.");
+    const api_key = import.meta.env.VITE_OPENAI_KEY;
+
+    const [answer, setAnswer] = useState("");
+    const [question, setQuestion] = useState("No answer yet...");
+
+    async function handleGPTRequest() {
+        console.log("Calling OpenAI API");
+        try {
+            await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + api_key
+                },
+                body: JSON.stringify({
+                    "model": "gpt-3.5-turbo",
+                    "messages": [{ "role": "assistant", "content": question }]
+                })
+            }).then(response => {
+                return response.json(import.meta.env.REACT_APP_OPENAI_KEY);
+            }).then(data => {
+                console.log(data);
+                setAnswer(data["choices"][0]["message"].content);
+            });
+        } catch (error) {
+            console.log(error);
+            setAnswer("Unfortunately, the API encountered an error. We apologize for the inconvenience, please try again!")
+        }
+
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const textbook = event.target.elements.textbook.value;
-        setAnswer(textbook);
-        console.log(textbook);
+        handleGPTRequest();
+    }
+
+    const handleTextboxChange = (event) => {
+        setQuestion(event.target.value);
     }
 
     const formRef = React.createRef();
@@ -29,8 +59,8 @@ const Service = () => {
                             <option value="select">Textbook</option>
                             <option value="euro">AP European History</option>
                         </select>
-                        <br /> <br />
-                        <textarea placeholder="Question">
+                        <br />
+                        <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
                         </textarea>
                         <br />
                         <input className="submit" type="submit" value="Ask" />
