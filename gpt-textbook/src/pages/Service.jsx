@@ -98,7 +98,7 @@ const Service = () => {
                 <div className="question">
                     <form ref={formRef} onSubmit={handleSubmit}>
                         <select name="textbook" id="textbook" onChange={handleModelChange}>
-                            <option value="gpt-3.5-turbo">Textbook</option>
+                            <option value="gpt-3.5-turbo">Base ChatGPT model</option>
                             <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
                         </select>
                         <br />
