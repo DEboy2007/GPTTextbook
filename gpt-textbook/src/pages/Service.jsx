@@ -7,9 +7,11 @@ const Service = () => {
 
     const [answer, setAnswer] = useState("");
     const [question, setQuestion] = useState("No answer yet...");
+    const [model, setModel] = useState("gpt-3.5-turbo");
 
     async function handleGPTRequest() {
         console.log("Calling OpenAI API");
+        setAnswer("Loading...")
         try {
             await fetch("https://api.openai.com/v1/chat/completions", {
                 method: "POST",
@@ -33,13 +35,54 @@ const Service = () => {
         }
     }
 
+    async function handleCustomGPTRequest() {
+        console.log("Calling " + model);
+        setAnswer("Loading...");
+        try {
+            await fetch("https://api.openai.com/v1/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + api_key
+                },
+                body: JSON.stringify({
+                    "model": model,
+                    "prompt": question,
+                    "max_tokens": 1000,
+                    "temperature": 0.7,
+                    "top_p": 1,
+                    "frequency_penalty": 0,
+                    "presence_penalty": 0.3,
+                    "stop": ["\n"],
+                })
+            }).then(response => {
+                return response.json(import.meta.env.REACT_APP_OPENAI_KEY);
+            }).then(data => {
+                console.log(data);
+                setAnswer(data["choices"][0]["text"]);
+            });
+        } catch (error) {
+            console.log(error);
+            setAnswer("Unfortunately, the API encountered an error. We apologize for the inconvenience, please try again!")
+        }
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        handleGPTRequest();
+        if (model === "gpt-3.5-turbo") {
+            handleGPTRequest();
+        } else {
+            handleCustomGPTRequest();
+        }
     }
 
     const handleTextboxChange = (event) => {
         setQuestion(event.target.value);
+    }
+
+    const handleModelChange = (event) => {
+        setModel(event.target.value);
+        console.log(event.target.value);
     }
 
     const formRef = React.createRef();
@@ -54,9 +97,9 @@ const Service = () => {
                 <br />
                 <div className="question">
                     <form ref={formRef} onSubmit={handleSubmit}>
-                        <select name="textbook" id="textbook">
-                            <option value="select">Textbook</option>
-                            <option value="euro">AP European History</option>
+                        <select name="textbook" id="textbook" onChange={handleModelChange}>
+                            <option value="gpt-3.5-turbo">Textbook</option>
+                            <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
                         </select>
                         <br />
                         <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
