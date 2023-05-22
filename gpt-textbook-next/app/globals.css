@@ -46,3 +46,49 @@ textarea {
   color:black;   
   resize: none;    
 }
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+
+  p {
+    font-size: 0.8em;
+  }
+
+  select {
+    width: 70%;
+    font-size: 1.5em;
+  }
+
+  textarea {
+    width: 90%;
+    height: 40vh;
+    font-size: 1.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2em;
+  }
+
+  p {
+    font-size: 0.6em;
+  }
+
+  select {
+    width: 90%;
+    font-size: 1.3em;
+  }
+
+  textarea {
+    width: 95%;
+    height: 30vh;
+    font-size: 1.5em;
+  }
+}
