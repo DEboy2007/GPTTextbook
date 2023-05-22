@@ -30,7 +30,7 @@ const Service = () => {
             const docRef = await addDoc(collection(db, "requests"), {
               prompt: question,
               time: serverTimestamp(),
-              tokens: data["usage"]["total_tokens"],
+              tokens: model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"]*2,
               uid: "placeholder",
               model: model,
             });
