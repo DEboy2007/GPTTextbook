@@ -32,6 +32,7 @@ const Service = () => {
               time: serverTimestamp(),
               tokens: data["usage"]["total_tokens"],
               uid: "placeholder",
+              model: model,
             });
             console.log("Document written with ID: ", docRef.id);
           } catch (e) {
