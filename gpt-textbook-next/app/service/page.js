@@ -23,21 +23,22 @@ const Service = () => {
     const [answer, setAnswer] = useState("Answer appears here!");
     const [question, setQuestion] = useState("No answer yet...");
     const [model, setModel] = useState("gpt-3.5-turbo");
+    const [button, setButton] = useState(false);
 
 
     async function writeData(data) {
         try {
             const docRef = await addDoc(collection(db, "requests"), {
-              prompt: question,
-              time: serverTimestamp(),
-              tokens: model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"]*2,
-              uid: "placeholder",
-              model: model,
+                prompt: question,
+                time: serverTimestamp(),
+                tokens: model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"] * 2,
+                uid: "placeholder",
+                model: model,
             });
             console.log("Document written with ID: ", docRef.id);
-          } catch (e) {
+        } catch (e) {
             console.error("Error adding document: ", e);
-          }
+        }
     }
 
     async function handleGPTRequest() {
@@ -60,10 +61,12 @@ const Service = () => {
                 console.log(data);
                 setAnswer(data["choices"][0]["message"].content);
                 writeData(data);
+                setButton(false);
             });
         } catch (error) {
             console.log(error);
             setAnswer("Unfortunately, the API encountered an error. We apologize for the inconvenience, please try again!")
+            setButton(false);
         }
     }
 
@@ -99,11 +102,13 @@ const Service = () => {
         } catch (error) {
             console.log(error);
             setAnswer("Unfortunately, the API encountered an error. We apologize for the inconvenience, please try again!")
+            setButton(false);
         }
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setButton(true);
         if (model === "gpt-3.5-turbo") {
             handleGPTRequest();
         } else {
@@ -117,7 +122,6 @@ const Service = () => {
 
     const handleModelChange = (event) => {
         setModel(event.target.value);
-        console.log(event.target.value);
     }
 
     const formRef = React.createRef();
@@ -140,7 +144,7 @@ const Service = () => {
                         <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
                         </textarea>
                         <br />
-                        <input className={styles.submit} type="submit" value="Ask" />
+                        <input className={styles.submit} type="submit" value="Ask" disabled={button} />
                     </form>
                 </div>
                 <br />
