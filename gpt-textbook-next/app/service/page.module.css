@@ -1,0 +1,22 @@
+.submit {
+    width: 30%;
+    height: 15%;
+    background: #588157;
+    border-radius: 0.5em;
+    font-size: 3em;
+    color:black;
+    border:none; 
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.answer {
+    width:821.25px;
+    height:252px;
+    font-size: 1.5em;
+    color:black;
+}
+
+/* To-do: Use @media thingamaching to make it better on mobile (smaller screens <x pixels) */

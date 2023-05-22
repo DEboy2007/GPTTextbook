@@ -1,11 +1,10 @@
+"use client";
 import React from 'react';
-import '../styles/Service.css';
 import { useState } from 'react';
+import styles from './page.module.css';
 
 const Service = () => {
-    const api_key = import.meta.env.VITE_OPENAI_KEY;
-
-    const [answer, setAnswer] = useState("");
+    const [answer, setAnswer] = useState("Answer appears here!");
     const [question, setQuestion] = useState("No answer yet...");
     const [model, setModel] = useState("gpt-3.5-turbo");
 
@@ -17,14 +16,14 @@ const Service = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + api_key
+                    "Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_KEY
                 },
                 body: JSON.stringify({
                     "model": "gpt-3.5-turbo",
                     "messages": [{ "role": "assistant", "content": question }]
                 })
             }).then(response => {
-                return response.json(import.meta.env.REACT_APP_OPENAI_KEY);
+                return response.json();
             }).then(data => {
                 console.log(data);
                 setAnswer(data["choices"][0]["message"].content);
@@ -43,7 +42,7 @@ const Service = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + api_key
+                    "Authorization": "Bearer " + process.env.NEXT_PUBLIC_OPENAI_KEY
                 },
                 body: JSON.stringify({
                     "model": model,
@@ -56,10 +55,13 @@ const Service = () => {
                     "stop": ["\n"],
                 })
             }).then(response => {
-                return response.json(import.meta.env.REACT_APP_OPENAI_KEY);
+                return response.json();
             }).then(data => {
                 console.log(data);
                 setAnswer(data["choices"][0]["text"]);
+            }).then(data => {
+                setQuestion("I have a finetuned model which is supposed to return answers from a textbook it is trained on. It was asked this question: " + question + ". The finetuned model gave this answer: " + answer + ". Use your general knowledge about the topic to make the finetuned model's answer more coherent and accurate, essentially filtering its weird artifacts or unrelated information while preserving its original information the best you can.")
+                handleGPTRequest();
             });
         } catch (error) {
             console.log(error);
@@ -89,13 +91,13 @@ const Service = () => {
 
     return (
         <>
-            <div className="container">
+            <div className={styles.container}>
                 <div>
                     <h1>GPT Textbook</h1>
                     <p>Select your textbook and type your prompt below</p>
                 </div>
                 <br />
-                <div className="question">
+                <div className={styles.question}>
                     <form ref={formRef} onSubmit={handleSubmit}>
                         <select name="textbook" id="textbook" onChange={handleModelChange}>
                             <option value="gpt-3.5-turbo">Base ChatGPT model</option>
@@ -105,12 +107,12 @@ const Service = () => {
                         <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
                         </textarea>
                         <br />
-                        <input className="submit" type="submit" value="Ask" />
+                        <input className={styles.submit} type="submit" value="Ask" />
                     </form>
                 </div>
                 <br />
                 <div>
-                    <textarea value={answer} readOnly={true} className='answer' />
+                    <textarea value={answer} readOnly={true} className={styles.answer} />
                 </div>
             </div>
         </>
