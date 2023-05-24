@@ -202,10 +202,16 @@ const Service = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setButton(true);
-        if (model === "gpt-3.5-turbo") {
-            handleGPTRequest();
+        console.log(fetchTokens());
+        if (fetchTokens() > 1000) {
+            if (model === "gpt-3.5-turbo") {
+                handleGPTRequest();
+            } else {
+                handleCustomGPTRequest();
+            }
         } else {
-            handleCustomGPTRequest();
+            setAnswer("Not enough tokens to make request!");
+            return;
         }
     }
 
