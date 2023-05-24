@@ -1,9 +1,10 @@
 "use client";
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 
 
 const firebaseConfig = {
@@ -18,12 +19,65 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
 
 const Service = () => {
     const [answer, setAnswer] = useState("Answer appears here!");
     const [question, setQuestion] = useState("No answer yet...");
     const [model, setModel] = useState("gpt-3.5-turbo");
     const [button, setButton] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        });
+
+        // Clean up the listener when the component unmounts
+        return () => unsubscribe();
+    }, []);
+
+    const handleSignInWithGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // User is signed in
+                const user = result.user;
+                setUser(user);
+
+                // Add the user to the database with their UID
+                addUserToDatabase(String(user.uid));
+            })
+            .catch((error) => {
+                // Handle sign-in errors
+                console.error(error);
+            });
+    };
+
+    const handleSignOut = () => {
+        signOut(auth)
+            .then(() => {
+                setUser(null);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    async function addUserToDatabase(uid) {
+        try {
+            const docRef = await setDoc(doc(db, "users", String(uid)), {
+                tokens: 1000,
+            });
+            console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    };
 
 
     async function writeData(data) {
@@ -125,34 +179,44 @@ const Service = () => {
     }
 
     const formRef = React.createRef();
-
     return (
-        <>
-            <div className={styles.container}>
-                <div>
-                    <h1>GPT Textbook</h1>
-                    <p>Select your textbook and type your prompt below</p>
+        user ? (
+            <>
+                <div className={styles.container}>
+                    <div>
+                        <h1>GPT Textbook</h1>
+                        <p>Select your textbook and type your prompt below</p>
+                    </div>
+                    <br />
+                    <div className={styles.question}>
+                        <form ref={formRef} onSubmit={handleSubmit}>
+                            <select name="textbook" id="textbook" onChange={handleModelChange}>
+                                <option value="gpt-3.5-turbo">Base ChatGPT model</option>
+                                <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
+                            </select>
+                            <br />
+                            <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
+                            </textarea>
+                            <br />
+                            <input className={styles.submit} type="submit" value="Ask" disabled={button} />
+                        </form>
+                    </div>
+                    <br />
+                    <div>
+                        <textarea value={answer} readOnly={true} className={styles.answer} />
+                    </div>
                 </div>
-                <br />
-                <div className={styles.question}>
-                    <form ref={formRef} onSubmit={handleSubmit}>
-                        <select name="textbook" id="textbook" onChange={handleModelChange}>
-                            <option value="gpt-3.5-turbo">Base ChatGPT model</option>
-                            <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
-                        </select>
-                        <br />
-                        <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
-                        </textarea>
-                        <br />
-                        <input className={styles.submit} type="submit" value="Ask" disabled={button} />
-                    </form>
-                </div>
-                <br />
-                <div>
-                    <textarea value={answer} readOnly={true} className={styles.answer} />
-                </div>
-            </div>
-        </>
+                <button class="logout" onClick={handleSignOut}>
+                    <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google" />
+                    <span>Log Out</span>
+                </button>
+            </>
+        ) : (
+            <button class="login" onClick={handleSignInWithGoogle}>
+                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google" />
+                <span>Sign in using Google</span>
+            </button>
+        )
     )
 }
 
