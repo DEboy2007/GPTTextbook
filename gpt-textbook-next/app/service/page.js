@@ -27,6 +27,7 @@ const Service = () => {
     const [model, setModel] = useState("gpt-3.5-turbo");
     const [button, setButton] = useState(false);
     const [user, setUser] = useState(null);
+    const [uid, setUid] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -48,9 +49,10 @@ const Service = () => {
                 // User is signed in
                 const user = result.user;
                 setUser(user);
+                setUid(user.uid);
 
                 // Add the user to the database with their UID
-                addUserToDatabase(String(user.uid));
+                addUserToDatabase();
             })
             .catch((error) => {
                 // Handle sign-in errors
@@ -68,7 +70,7 @@ const Service = () => {
             });
     };
 
-    async function addUserToDatabase(uid) {
+    async function addUserToDatabase() {
         try {
             const docRef = await setDoc(doc(db, "users", String(uid)), {
                 tokens: 1000,
@@ -86,7 +88,7 @@ const Service = () => {
                 prompt: question,
                 time: serverTimestamp(),
                 tokens: model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"] * 2,
-                uid: "placeholder",
+                uid: uid,
                 model: model,
             });
             console.log("Document written with ID: ", docRef.id);
