@@ -3,7 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, setDoc, doc, getDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 
 
@@ -72,9 +72,16 @@ const Service = () => {
 
     async function addUserToDatabase() {
         try {
-            const docRef = await setDoc(doc(db, "users", String(uid)), {
+            const docRef = doc(db, "users", String(uid));
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Returning user");
+                return;
+            }
+            await setDoc(docRef, {
                 tokens: 1000,
-            });
+              }, { merge: true });
             console.log("Document written with ID: ", docRef.id);
         } catch (e) {
             console.error("Error adding document: ", e);
