@@ -50,7 +50,7 @@ const Service = () => {
                 const user = result.user;
                 setUser(user);
                 setUid(user.uid);
-
+                console.log(user.uid);
                 // Add the user to the database with their UID
                 addUserToDatabase();
             })
@@ -80,7 +80,7 @@ const Service = () => {
                 return;
             }
             await setDoc(docRef, {
-                tokens: 1000,
+                tokens: 10000,
               }, { merge: true });
             console.log("Document written with ID: ", docRef.id);
         } catch (e) {
@@ -103,6 +103,17 @@ const Service = () => {
             console.error("Error adding document: ", e);
         }
     }
+
+    // async function getUserTokens() {
+    //     const docRef = doc(db, "users", String(uid));
+    //     const docSnap = await getDoc(docRef);
+
+    //     if (docSnap.exists()) {
+    //         return docSnap.data().tokens;
+    //     } else {
+    //         return 0;
+    //     }
+    // }
 
     async function handleGPTRequest() {
         console.log("Calling OpenAI API");
@@ -195,6 +206,7 @@ const Service = () => {
                     <div>
                         <h1>GPT Textbook</h1>
                         <p>Select your textbook and type your prompt below</p>
+                        {/* <p><b>Tokens available: {getUserTokens()}.</b> You need at least 1000 tokens to make a request.</p> */}
                     </div>
                     <br />
                     <div className={styles.question}>
