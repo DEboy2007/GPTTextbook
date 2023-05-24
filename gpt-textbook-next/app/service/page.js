@@ -28,6 +28,36 @@ const Service = () => {
     const [button, setButton] = useState(false);
     const [user, setUser] = useState(null);
     const [uid, setUid] = useState(null);
+    const [tokens, setTokens] = useState(0);
+
+    // Fetch tokens available from Firebase
+    const fetchTokens = async () => {
+        try {
+        const docRef = doc(db, "users", String(uid));
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+            setTokens(docSnap.data().tokens);
+        } else {
+            console.log("No such document!");
+            setTokens(0);
+        }
+        } catch (e) {
+        console.error("Error getting document: ", e);
+        setTokens(0);
+        }
+    };
+
+    // Run the fetchTokens function initially and every 10 seconds
+    useEffect(() => {
+        fetchTokens(); // Fetch tokens initially
+
+        const interval = setInterval(fetchTokens, 10000); // Fetch tokens every 10 seconds
+
+        // Clean up the interval when the component unmounts
+        return () => clearInterval(interval);
+    }, [uid]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -103,17 +133,6 @@ const Service = () => {
             console.error("Error adding document: ", e);
         }
     }
-
-    // async function getUserTokens() {
-    //     const docRef = doc(db, "users", String(uid));
-    //     const docSnap = await getDoc(docRef);
-
-    //     if (docSnap.exists()) {
-    //         return docSnap.data().tokens;
-    //     } else {
-    //         return 0;
-    //     }
-    // }
 
     async function handleGPTRequest() {
         console.log("Calling OpenAI API");
@@ -206,7 +225,7 @@ const Service = () => {
                     <div>
                         <h1>GPT Textbook</h1>
                         <p>Select your textbook and type your prompt below</p>
-                        {/* <p><b>Tokens available: {getUserTokens()}.</b> You need at least 1000 tokens to make a request.</p> */}
+                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
                     </div>
                     <br />
                     <div className={styles.question}>
