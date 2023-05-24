@@ -5,7 +5,7 @@ import styles from './page.module.css';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, serverTimestamp, setDoc, doc, getDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
-
+import GoogleButton from 'react-google-button'
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -215,16 +215,23 @@ const Service = () => {
                         <textarea value={answer} readOnly={true} className={styles.answer} />
                     </div>
                 </div>
-                <button class="logout" onClick={handleSignOut}>
-                    <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google" />
-                    <span>Log Out</span>
-                </button>
+                <GoogleButton
+                    label="Sign Out"
+                    className={styles.GoogleButton}
+                    onClick={handleSignOut}
+                />
             </>
         ) : (
-            <button class="login" onClick={handleSignInWithGoogle}>
-                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google" />
-                <span>Sign in using Google</span>
-            </button>
+            <div className={styles.container}>
+                <div>
+                    <h1>Welcome to GPTTextbook</h1>
+                    <p>The convenience of ChatGPT with the accuracy of a textbook!</p>
+                </div>
+                <GoogleButton
+                    className={styles.GoogleButton}
+                    onClick={handleSignInWithGoogle}
+                />
+            </div>
         )
     )
 }
