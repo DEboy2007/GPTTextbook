@@ -72,7 +72,8 @@ const Service = () => {
         return () => unsubscribe();
     }, []);
 
-    const handleSignInWithGoogle = () => {
+    const handleSignInWithGoogle = (event) => {
+        event.preventDefault();
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider)
             .then((result) => {
@@ -202,8 +203,8 @@ const Service = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setButton(true);
-        console.log(fetchTokens());
-        if (fetchTokens() > 1000) {
+        console.log(tokens);
+        if (tokens > 1000) {
             if (model === "gpt-3.5-turbo") {
                 handleGPTRequest();
             } else {
@@ -211,6 +212,7 @@ const Service = () => {
             }
         } else {
             setAnswer("Not enough tokens to make request!");
+            setButton(false);
             return;
         }
     }
