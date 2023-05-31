@@ -33,19 +33,19 @@ const Service = () => {
     // Fetch tokens available from Firebase
     const fetchTokens = async () => {
         try {
-        const docRef = doc(db, "users", String(uid));
-        const docSnap = await getDoc(docRef);
+            const docRef = doc(db, "users", String(uid));
+            const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-            setTokens(docSnap.data().tokens);
-        } else {
-            console.log("No such document!");
-            setTokens(0);
-        }
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+                setTokens(docSnap.data().tokens);
+            } else {
+                console.log("No such document!");
+                setTokens(0);
+            }
         } catch (e) {
-        console.error("Error getting document: ", e);
-        setTokens(0);
+            console.error("Error getting document: ", e);
+            setTokens(0);
         }
     };
 
@@ -112,7 +112,7 @@ const Service = () => {
             }
             await setDoc(docRef, {
                 tokens: 10000,
-              }, { merge: true });
+            }, { merge: true });
             console.log("Document written with ID: ", docRef.id);
         } catch (e) {
             console.error("Error adding document: ", e);
