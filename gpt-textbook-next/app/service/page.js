@@ -63,8 +63,12 @@ const Service = () => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUser(user);
+                setUid(user.uid);
+                console.log(user.uid);
+                addUserToDatabase(user.uid);
             } else {
                 setUser(null);
+                setUid(null);
             }
         });
 
@@ -72,50 +76,56 @@ const Service = () => {
         return () => unsubscribe();
     }, []);
 
-    const handleSignInWithGoogle = (event) => {
+    const handleSignInWithGoogle = async (event) => {
         event.preventDefault();
         const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                // User is signed in
-                const user = result.user;
-                setUser(user);
-                setUid(user.uid);
-                console.log(user.uid);
-                // Add the user to the database with their UID
-                addUserToDatabase();
-            })
-            .catch((error) => {
-                // Handle sign-in errors
-                console.error(error);
-            });
-    };
-
-    const handleSignOut = () => {
-        signOut(auth)
+        await signInWithPopup(auth, provider)
+          .then((result) => {
+            // User is signed in
+            const user = result.user;
+            setUid(user.uid); // Update the uid state with the user's uid
+            console.log(user.uid);
+            setUser(user);
+          })
+          .catch((error) => {
+            // Handle sign-in errors
+            console.error(error);
+          });
+      };
+      
+    
+    // Handle sign out function
+    const handleSignOut = async() => {
+        await signOut(auth)
             .then(() => {
+                // Sign-out successful
+                console.log("Sign-out successful");
                 setUser(null);
+                setUid(null);
             })
             .catch((error) => {
+                // An error occurred
                 console.error(error);
             });
     };
-
-    async function addUserToDatabase() {
+    
+    async function addUserToDatabase(uid) { // Receive uid as an argument
         try {
             const docRef = doc(db, "users", String(uid));
             const docSnap = await getDoc(docRef);
-
+    
             if (docSnap.exists()) {
                 console.log("Returning user");
-                return;
+                return uid;
             }
             await setDoc(docRef, {
                 tokens: 10000,
-              }, { merge: true });
+            }, { merge: true });
             console.log("Document written with ID: ", docRef.id);
+            return uid;
         } catch (e) {
             console.error("Error adding document: ", e);
+            return null;
         }
     };
 
@@ -204,7 +214,7 @@ const Service = () => {
         event.preventDefault();
         setButton(true);
         console.log(tokens);
-        if (tokens > 1000) {
+        if (tokens >= 1000) {
             if (model === "gpt-3.5-turbo") {
                 handleGPTRequest();
             } else {
@@ -233,7 +243,8 @@ const Service = () => {
                     <div>
                         <h1>GPT Textbook</h1>
                         <p>Select your textbook and type your prompt below</p>
-                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
+                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.<br/>
+                        <b>Note:</b> If you are a new user and it shows tokens as 0 even after a few seconds, try logging out and in again.</p>
                     </div>
                     <br />
                     <div className={styles.question}>
