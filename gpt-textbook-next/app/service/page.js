@@ -80,20 +80,20 @@ const Service = () => {
         event.preventDefault();
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider)
-          .then((result) => {
-            // User is signed in
-            const user = result.user;
-            console.log(user.uid);
-          })
-          .catch((error) => {
-            // Handle sign-in errors
-            console.error(error);
-          });
-      };
-      
-    
+            .then((result) => {
+                // User is signed in
+                const user = result.user;
+                console.log(user.uid);
+            })
+            .catch((error) => {
+                // Handle sign-in errors
+                console.error(error);
+            });
+    };
+
+
     // Handle sign out function
-    const handleSignOut = async() => {
+    const handleSignOut = async () => {
         await signOut(auth)
             .then(() => {
                 // Sign-out successful
@@ -106,12 +106,12 @@ const Service = () => {
                 console.error(error);
             });
     };
-    
+
     async function addUserToDatabase(uid) { // Receive uid as an argument
         try {
             const docRef = doc(db, "users", String(uid));
             const docSnap = await getDoc(docRef);
-    
+
             if (docSnap.exists()) {
                 console.log("Returning user");
                 return uid;
@@ -138,8 +138,28 @@ const Service = () => {
                 model: model,
             });
             console.log("Document written with ID: ", docRef.id);
+            subtractTokens(model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"] * 2);
         } catch (e) {
             console.error("Error adding document: ", e);
+        }
+    }
+
+    async function subtractTokens(tokens) {
+        try {
+            const docRef = doc(db, "users", String(uid));
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+                await setDoc(docRef, {
+                    tokens: docSnap.data().tokens - tokens,
+                }, { merge: true });
+                console.log("Document written with ID: ", docRef.id);
+            } else {
+                console.log("No such document!");
+            }
+        } catch (e) {
+            console.error("Error getting document: ", e);
         }
     }
 
