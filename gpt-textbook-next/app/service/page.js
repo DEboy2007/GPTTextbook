@@ -243,8 +243,7 @@ const Service = () => {
                     <div>
                         <h1>GPT Textbook</h1>
                         <p>Select your textbook and type your prompt below</p>
-                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.<br/>
-                        <b>Note:</b> If you are a new user and it shows tokens as 0 even after a few seconds, try logging out and in again.</p>
+                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
                     </div>
                     <br />
                     <div className={styles.question}>
