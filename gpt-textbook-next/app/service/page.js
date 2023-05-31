@@ -53,7 +53,7 @@ const Service = () => {
     useEffect(() => {
         fetchTokens(); // Fetch tokens initially
 
-        const interval = setInterval(fetchTokens, 10000); // Fetch tokens every 10 seconds
+        const interval = setInterval(fetchTokens, 5000); // Fetch tokens every 10 seconds
 
         // Clean up the interval when the component unmounts
         return () => clearInterval(interval);
@@ -83,9 +83,7 @@ const Service = () => {
           .then((result) => {
             // User is signed in
             const user = result.user;
-            setUid(user.uid); // Update the uid state with the user's uid
             console.log(user.uid);
-            setUser(user);
           })
           .catch((error) => {
             // Handle sign-in errors
