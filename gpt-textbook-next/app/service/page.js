@@ -259,34 +259,37 @@ const Service = () => {
             <>
                 <div className={styles.container}>
                     <div>
-                        <h1>GPT Textbook</h1>
-                        <p>Select your textbook and type your prompt below</p>
-                        <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
+                        <div>
+                            <h1>GPT Textbook</h1>
+                            <p>Select your textbook and type your prompt below</p>
+                            <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
+                        </div>
+                        <br />
+                        <div className={styles.question}>
+                            <form ref={formRef} onSubmit={handleSubmit}>
+                                <select name="textbook" id="textbook" onChange={handleModelChange}>
+                                    <option value="gpt-3.5-turbo">Base ChatGPT model</option>
+                                    <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
+                                </select>
+                                <br />
+                                <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
+                                </textarea>
+                                <br />
+                                <input className={styles.submit} type="submit" value="Ask" disabled={button} />
+                            </form>
+                        </div>
+                        <br />
+                        <div>
+                            <textarea value={answer} readOnly={true} className={styles.answer} />
+                        </div>
                     </div>
                     <br />
-                    <div className={styles.question}>
-                        <form ref={formRef} onSubmit={handleSubmit}>
-                            <select name="textbook" id="textbook" onChange={handleModelChange}>
-                                <option value="gpt-3.5-turbo">Base ChatGPT model</option>
-                                <option value="curie:ft-personal-2023-05-19-18-07-57">AP European History</option>
-                            </select>
-                            <br />
-                            <textarea name="question" id="question" placeholder="Question" onChange={handleTextboxChange}>
-                            </textarea>
-                            <br />
-                            <input className={styles.submit} type="submit" value="Ask" disabled={button} />
-                        </form>
-                    </div>
-                    <br />
-                    <div>
-                        <textarea value={answer} readOnly={true} className={styles.answer} />
-                    </div>
+                    <GoogleButton
+                        label="Sign Out"
+                        className={styles.SignOut}
+                        onClick={handleSignOut}
+                    />
                 </div>
-                <GoogleButton
-                    label="Sign Out"
-                    className={styles.GoogleButton}
-                    onClick={handleSignOut}
-                />
             </>
         ) : (
             <div className={styles.container}>
@@ -295,7 +298,7 @@ const Service = () => {
                     <p>The convenience of ChatGPT with the accuracy of a textbook!</p>
                 </div>
                 <GoogleButton
-                    className={styles.GoogleButton}
+                    className={styles.SignIn}
                     onClick={handleSignInWithGoogle}
                 />
             </div>

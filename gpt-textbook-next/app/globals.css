@@ -1,50 +1,72 @@
 body {
   background-color: #262626;
   font-family: 'Inter', sans-serif;
-  /* CENTER MAIN DIV */
-  display:grid;
-  place-content: center;
+  color: #fff;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-h1, p {
-  text-align: center;
-  color: white;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  justify-content: center;
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.5em;
+  color: #72b471;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 p {
-  font-size: 1em;
+  font-size: 1.2em;
+  color: #ccc;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* CENTER INDIVIDUAL ITEMS */
+/* Center individual items horizontally */
 select, textarea, .submit {
-  display: flex;
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
+  width: 90%;
 }
 
 select {
-  background: #9EB3C2;
-  width: 45%;
-  height: 15%;
-  font-size: 2em;
-  color: rgba(0, 0, 0, 0.38);
-  border-radius: 0.25em;  
+  height: 40px;
+  font-size: 1.2em;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #000;
+  background-color: #fff;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  justify-content: center;
 }
 
-
 textarea {
-  background: #9EB3C2;
-  width: 75%;
-  height: 5em;
-  border-radius: 0.25em;
-  font-size: 2.5em;
-  color:black;   
-  resize: none;    
+  height: 200px;
+  font-size: 1.2em;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  color: #000;
+  background-color: #fff;
+  margin: auto;
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -92,3 +114,4 @@ textarea {
     font-size: 1.5em;
   }
 }
+
