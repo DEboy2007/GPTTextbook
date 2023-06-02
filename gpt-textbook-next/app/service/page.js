@@ -29,6 +29,7 @@ const Service = () => {
     const [user, setUser] = useState(null);
     const [uid, setUid] = useState(null);
     const [tokens, setTokens] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     // Fetch tokens available from Firebase
     const fetchTokens = async () => {
@@ -280,9 +281,14 @@ const Service = () => {
                             </form>
                         </div>
                         <br />
-                        <div>
-                            <textarea value={answer} readOnly={true} className={styles.answer} />
-                        </div>
+                        loading ? (
+                            
+                        ) :
+                        (
+                            <div>
+                                <textarea value={answer} readOnly={true} className={styles.answer} />
+                            </div>
+                        )
                     </div>
                     <br />
                     <GoogleButton
