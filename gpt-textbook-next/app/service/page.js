@@ -117,7 +117,7 @@ const Service = () => {
                 return uid;
             }
             await setDoc(docRef, {
-                tokens: 10000,
+                tokens: 50,
             }, { merge: true });
             console.log("Document written with ID: ", docRef.id);
             return uid;
@@ -132,13 +132,14 @@ const Service = () => {
         try {
             const docRef = await addDoc(collection(db, "requests"), {
                 prompt: question,
+                answer: data["choices"][0]["message"].content,
                 time: serverTimestamp(),
                 tokens: model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"] * 2,
                 uid: uid,
                 model: model,
             });
             console.log("Document written with ID: ", docRef.id);
-            subtractTokens(model === "gpt-3.5-turbo" ? data["usage"]["total_tokens"] : data["usage"]["total_tokens"] * 2);
+            subtractTokens(1);
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -152,7 +153,7 @@ const Service = () => {
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data());
                 await setDoc(docRef, {
-                    tokens: docSnap.data().tokens - tokens,
+                    tokens: docSnap.data().tokens == 0 ? docSnap.data().tokens = 0 : docSnap.data().tokens = docSnap.data().tokens - tokens,
                 }, { merge: true });
                 console.log("Document written with ID: ", docRef.id);
             } else {
@@ -232,14 +233,14 @@ const Service = () => {
         event.preventDefault();
         setButton(true);
         console.log(tokens);
-        if (tokens >= 1000) {
+        if (tokens > 0) {
             if (model === "gpt-3.5-turbo") {
                 handleGPTRequest();
             } else {
                 handleCustomGPTRequest();
             }
         } else {
-            setAnswer("Not enough tokens to make request!");
+            setAnswer("Sorry, you have run out of requests!");
             setButton(false);
             return;
         }
@@ -262,7 +263,7 @@ const Service = () => {
                         <div>
                             <h1>GPT Textbook</h1>
                             <p>Select your textbook and type your prompt below</p>
-                            <p><b>Tokens available: {tokens}.</b> You need at least 1000 tokens to make a request.</p>
+                            <p><b>Requests available:</b> {tokens}</p>
                         </div>
                         <br />
                         <div className={styles.question}>
