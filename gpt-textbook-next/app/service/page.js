@@ -281,9 +281,14 @@ const Service = () => {
                             </form>
                         </div>
                         <br />
-                        <div>
-                            <textarea value={answer} readOnly={true} className={styles.answer} />
-                        </div>
+                        loading ? (
+                            
+                        ) :
+                        (
+                            <div>
+                                <textarea value={answer} readOnly={true} className={styles.answer} />
+                            </div>
+                        )
                     </div>
                     <br />
                     <GoogleButton
