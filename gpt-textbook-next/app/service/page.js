@@ -6,6 +6,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, serverTimestamp, setDoc, doc, getDoc } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import GoogleButton from 'react-google-button'
+import HashLoader from "react-spinners/HashLoader";
+
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -186,6 +188,7 @@ const Service = () => {
                 setAnswer(data["choices"][0]["message"].content);
                 writeData(data);
                 setButton(false);
+                setLoading(false);
             });
         } catch (error) {
             console.log(error);
@@ -233,6 +236,7 @@ const Service = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setButton(true);
+        setLoading(true);
         console.log(tokens);
         if (tokens > 0) {
             if (model === "gpt-3.5-turbo") {
@@ -282,6 +286,13 @@ const Service = () => {
                         </div>
                         <br />
                         <div>
+                            <br />
+                            <HashLoader
+                                color="#36d7b7"
+                                loading={loading}
+                                className={styles.loader}
+                            />
+                            <br />
                             <textarea value={answer} readOnly={true} className={styles.answer} />
                         </div>
                     </div>
