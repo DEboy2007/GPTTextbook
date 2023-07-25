@@ -10,7 +10,7 @@ from langchain.schema import (
     SystemMessage
 )
 
-# key = "ed91a6e06d4a4e9a9d2b9419eba8a1f8"
+# key = st.secrets["DB_AZURE_KEY"]
 # model = AzureChatOpenAI(
 #     openai_api_base="https://codx-genai-server.openai.azure.com/",
 #     openai_api_key=key,
