@@ -29,7 +29,6 @@ from langchain.schema import (
 # )
 
 personal = st.secrets["DB_OPENAI_KEY"]
-st.write(personal)
 model = ChatOpenAI(openai_api_key=personal)
 embeddings = OpenAIEmbeddings(openai_api_key=personal)
 
