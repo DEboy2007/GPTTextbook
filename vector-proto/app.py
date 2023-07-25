@@ -88,8 +88,8 @@ if textbook != "Select Textbook":
     else:
         # print working directory
         import os
-        print(os.getcwd())
-        print(os.listdir(os.getcwd()))
+        st.write(os.getcwd())
+        st.write(os.listdir(os.getcwd()))
 
         docsearch = FAISS.load_local(f"./Embeddings/{textbook}.faiss", embeddings)
 
