@@ -86,7 +86,7 @@ if textbook != "Select Textbook":
                 ]
                 st.write(model(messages).content)
     else:
-        docsearch = FAISS.load_local(f"Embeddings/{textbook}.faiss", embeddings)
+        docsearch = FAISS.load_local(f"./Embeddings/{textbook}.faiss", embeddings)
 
         st.write("### Ask chatGPT a question:")
         question = st.text_input(label="Enter your question here:", value="")
