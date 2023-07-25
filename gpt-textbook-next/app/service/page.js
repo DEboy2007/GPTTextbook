@@ -32,6 +32,7 @@ const Service = () => {
     const [uid, setUid] = useState(null);
     const [tokens, setTokens] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [showBuyDiv, setShowBuyDiv] = useState(false);
 
     // Fetch tokens available from Firebase
     const fetchTokens = async () => {
@@ -148,6 +149,20 @@ const Service = () => {
         }
     }
 
+    async function handlePayment() {
+        try {
+            const docRef = await setDoc(collection(db, '${param:CUSTOMERS_COLLECTION}', uid, "checkout_sessions"), {
+                mode: "payment",
+                price: "price_1GqIC8HYgolSBA35zoTTN2Zl", // One-time price created in Stripe
+                success_url: window.location.origin,
+                cancel_url: window.location.origin,
+            });
+            console.log("Document written with ID: ", docRef.id);
+        } catch (error) {
+            console.error("Error writing checkout session data:", error);
+        }
+    }
+
     async function subtractTokens(tokens) {
         try {
             const docRef = doc(db, "users", String(uid));
@@ -259,6 +274,12 @@ const Service = () => {
         setModel(event.target.value);
     }
 
+    const handleBuyTokens = () => {
+        setShowBuyDiv(!showBuyDiv);
+        handlePayment();
+
+    };
+
     const formRef = React.createRef();
     return (
         user ? (
@@ -268,8 +289,22 @@ const Service = () => {
                         <div>
                             <h1>GPT Textbook</h1>
                             <p>Select your textbook and type your prompt below</p>
-                            <p><b>Requests available:</b> {tokens}</p>
+                            <p><b>Requests available:</b> {tokens} <br /></p>
+                                {/* <span className={styles.buyTokens} onClick={handleBuyTokens}>
+                                    <b><u>Want more requests?</u></b>
+                                </span></p> */}
                         </div>
+                        {showBuyDiv && <div className={styles.buy}>
+                            <script async
+                                src="https://js.stripe.com/v3/buy-button.js">
+                            </script>
+
+                            <stripe-buy-button
+                                buy-button-id="buy_btn_1NGXkCI42JKbq279O8aeTpxw"
+                                publishable-key="pk_test_51NG6eGI42JKbq2795kiDNBelzhyVljxwq3uuKdJ51D5Nliweo7c27ksNY2r26ytI8aHeQbYlklL376HCTKSQmqCa00QWrg0oZ6"
+                            >
+                            </stripe-buy-button>
+                        </div>}
                         <br />
                         <div className={styles.question}>
                             <form ref={formRef} onSubmit={handleSubmit}>
