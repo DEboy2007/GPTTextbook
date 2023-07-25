@@ -28,7 +28,7 @@ from langchain.schema import (
 #     max_retries=10
 # )
 
-personal = "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"
+personal = st.secrets["DB_OPENAI_KEY"]
 model = ChatOpenAI(openai_api_key=personal)
 embeddings = OpenAIEmbeddings(openai_api_key=personal)
 
