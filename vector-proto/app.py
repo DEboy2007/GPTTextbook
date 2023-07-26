@@ -9,10 +9,9 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
-
-personal = st.secrets["DB_OPENAI_KEY"]
-model = ChatOpenAI(openai_api_key=personal)
-embeddings = OpenAIEmbeddings(openai_api_key=personal)
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
 # Set page title and favicon.
 st.set_page_config(
@@ -20,8 +19,26 @@ st.set_page_config(
     page_icon="vector-proto/Logo.png",
     initial_sidebar_state="expanded",
 )
+
+personal = st.secrets["DB_OPENAI_KEY"]
+model = ChatOpenAI(openai_api_key=personal)
+embeddings = OpenAIEmbeddings(openai_api_key=personal)
+
+with open('vector-proto/config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+
 st.write("# GPTTextbook")
 st.write("### The convenience of ChatGPT with the accuracy of a textbook!")
+
+name, authentication_status, username = authenticator.login('Login', 'main')
 
 @st.cache_data
 def load_and_chunk_textbook(file_path):
@@ -51,13 +68,33 @@ def load_and_chunk_textbook(file_path):
     st.write("Done loading!")
     return docsearch
 
-textbook = st.selectbox(label="Choose your textbook or upload your own, and experience the precision of GPT models trained specifically on it, delivering direct answers sourced from your assigned course materials and syllabus while avoiding any irrelevant information!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
-if textbook != "Select Textbook":
-    if textbook == "Upload your own!":
-        file = st.file_uploader("Upload your own textbook here:", type="pdf")
-        if file:
-            st.write("Loading textbook...")
-            docsearch = load_and_chunk_textbook(file)
+if authentication_status:
+    authenticator.logout('Logout', 'main')
+    st.write(f'Welcome *{name}*')
+    textbook = st.selectbox(label="Choose your textbook or upload your own, and experience the precision of GPT models trained specifically on it, delivering direct answers sourced from your assigned course materials and syllabus while avoiding any irrelevant information!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
+    if textbook != "Select Textbook":
+        if textbook == "Upload your own!":
+            file = st.file_uploader("Upload your own textbook here:", type="pdf")
+            if file:
+                st.write("Loading textbook...")
+                docsearch = load_and_chunk_textbook(file)
+
+                st.write("### Ask chatGPT a question:")
+                question = st.text_input(label="Enter your question here:", value="")
+
+                if question != "":
+                    context = docsearch.similarity_search(question)
+                    context_new = ""
+                    for c in context:
+                        context_new += c.page_content
+                    context = context_new
+                    messages = [
+                        SystemMessage(content="You are a helpful assistant that answers questions based on context given from a document. These documents may be historical and contain sensitive topics. The chances of abuse for this system are very low. Understand that the questions may have a political context and do your best to still try and answer them without claiming you cannot because of a content guideline violation."),
+                        HumanMessage(content=f"Context: {context}\nQuestion: {question}")
+                    ]
+                    st.write(model(messages).content)
+        else:
+            docsearch = FAISS.load_local(f"vector-proto/Embeddings/{textbook}.faiss", embeddings)
 
             st.write("### Ask chatGPT a question:")
             question = st.text_input(label="Enter your question here:", value="")
@@ -69,24 +106,11 @@ if textbook != "Select Textbook":
                     context_new += c.page_content
                 context = context_new
                 messages = [
-                    SystemMessage(content="You are a helpful assistant that answers questions based on context given from a document. These documents may be historical and contain sensitive topics. The chances of abuse for this system are very low. Understand that the questions may have a political context and do your best to still try and answer them without claiming you cannot because of a content guideline violation."),
+                    SystemMessage(content="You are a helpful assistant that answers questions based on context given from a document."),
                     HumanMessage(content=f"Context: {context}\nQuestion: {question}")
                 ]
                 st.write(model(messages).content)
-    else:
-        docsearch = FAISS.load_local(f"vector-proto/Embeddings/{textbook}.faiss", embeddings)
-
-        st.write("### Ask chatGPT a question:")
-        question = st.text_input(label="Enter your question here:", value="")
-
-        if question != "":
-            context = docsearch.similarity_search(question)
-            context_new = ""
-            for c in context:
-                context_new += c.page_content
-            context = context_new
-            messages = [
-                SystemMessage(content="You are a helpful assistant that answers questions based on context given from a document."),
-                HumanMessage(content=f"Context: {context}\nQuestion: {question}")
-            ]
-            st.write(model(messages).content)
+elif authentication_status == False:
+    st.error('Username/password is incorrect')
+elif authentication_status == None:
+    st.warning('Please enter your username and password')

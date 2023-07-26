@@ -1,0 +1,21 @@
+credentials:
+  usernames:
+    deboy2007:
+      email: dhanush.ekollu@gmail.com
+      name: Dhanush Ekollu
+      password: $2b$12$TtSSmxzD6qfI2SSnxKDkd.OolQGBSStyzj6oY/QcsAPBeovOwW55K
+    deboy2007other:
+      email: dhanush.ekollu.other@gmail.com
+      name: Dhanush Other
+      password: $2b$12$V6Wn9XVN0Gg3hdRXIdXFXe9bvNMKp0aJBcsdNCJy1QmFiGPhKUaJ.
+    racquee:
+      email: avitaneja07@gmail.com
+      name: Avi Taneja
+      password: $2b$12$WAdlz9p9C7PglM9TLEVCNej0DeepibsICD8bABuQDx.L5gJsgE9zS
+cookie:
+  expiry_days: 0
+  key: nd9239h723hfjhf29hkjhf # Must be string
+  name: gpt_textbook_cookie
+preauthorized:
+  emails:
+  - dhanush.ekollu.other@gmail.com
