@@ -14,6 +14,12 @@ personal = st.secrets["DB_OPENAI_KEY"]
 model = ChatOpenAI(openai_api_key=personal)
 embeddings = OpenAIEmbeddings(openai_api_key=personal)
 
+# Set page title and favicon.
+st.set_page_config(
+    page_title="GPTTextbook",
+    page_icon="vector-proto/Logo.png",
+    initial_sidebar_state="expanded",
+)
 st.write("# GPTTextbook")
 st.write("### The convenience of ChatGPT with the accuracy of a textbook!")
 
