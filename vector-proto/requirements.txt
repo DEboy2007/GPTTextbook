@@ -3,3 +3,4 @@ langchain
 openai
 faiss-cpu
 tiktoken
+streamlit-authenticator

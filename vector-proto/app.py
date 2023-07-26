@@ -10,30 +10,12 @@ from langchain.schema import (
     SystemMessage
 )
 
-# key = st.secrets["DB_AZURE_KEY"]
-# model = AzureChatOpenAI(
-#     openai_api_base="https://codx-genai-server.openai.azure.com/",
-#     openai_api_key=key,
-#     openai_api_version="2023-03-15-preview",
-#     deployment_name="chatGPT",
-#     temperature=0,
-# )
-# embeddings = OpenAIEmbeddings(
-#     chunk_size=1,
-#     openai_api_key=key,
-#     openai_api_type="azure",
-#     openai_api_base="https://codx-genai-server.openai.azure.com/",
-#     openai_api_version="2023-03-15-preview",
-#     deployment="embeddings-ada",
-#     max_retries=10
-# )
-
 personal = st.secrets["DB_OPENAI_KEY"]
 model = ChatOpenAI(openai_api_key=personal)
 embeddings = OpenAIEmbeddings(openai_api_key=personal)
 
 st.write("# GPTTextbook")
-st.write("### EXPERIMENTAL: Prototype for vector-embeddings and semantic search approach")
+st.write("### The convenience of ChatGPT with the accuracy of a textbook!")
 
 @st.cache_data
 def load_and_chunk_textbook(file_path):
@@ -63,7 +45,7 @@ def load_and_chunk_textbook(file_path):
     st.write("Done loading!")
     return docsearch
 
-textbook = st.selectbox(label="Select your desired textbook:", options=["Select Textbook", "Upload your own!", "APUSH", "AP EURO"])
+textbook = st.selectbox(label="Choose your textbook or upload your own, and experience the precision of GPT models trained specifically on it, delivering direct answers sourced from your assigned course materials and syllabus while avoiding any irrelevant information!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
 if textbook != "Select Textbook":
     if textbook == "Upload your own!":
         file = st.file_uploader("Upload your own textbook here:", type="pdf")
