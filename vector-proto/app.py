@@ -70,7 +70,7 @@ def load_and_chunk_textbook(file_path):
 
 if authentication_status:
     authenticator.logout('Logout', 'main')
-    st.write(f'Welcome *{name}*')
+    st.write(f'Welcome, {name}.')
     textbook = st.selectbox(label="Choose your textbook or upload your own, and experience the precision of GPT models trained specifically on it, delivering direct answers sourced from your assigned course materials and syllabus while avoiding any irrelevant information!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
     if textbook != "Select Textbook":
         if textbook == "Upload your own!":
