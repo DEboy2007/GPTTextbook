@@ -10,7 +10,6 @@ from langchain.schema import (
     SystemMessage
 )
 
-# Set page title and favicon.
 st.set_page_config(
     page_title="GPTTextbook",
     page_icon="vector-proto/Logo.png",
@@ -52,7 +51,8 @@ def load_and_chunk_textbook(file_path):
     st.write("Done loading!")
     return docsearch
 
-textbook = st.selectbox(label="Choose your textbook or upload your own, and experience the precision of GPT models trained specifically on it, delivering direct answers sourced from your assigned course materials and syllabus while avoiding any irrelevant information!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
+textbook = st.selectbox(label="A GPT model trained on your specific textbook to provide subject-relevant, extensive, and accurate answers. Select your textbook or upload your own!", options=["Select Textbook", "Upload your own!", "By The People - A History of the United States", "A History of Westen Society"])
+
 if textbook != "Select Textbook":
     if textbook == "Upload your own!":
         file = st.file_uploader("Upload your own textbook here:", type="pdf")
