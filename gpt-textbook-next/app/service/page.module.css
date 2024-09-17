@@ -16,6 +16,12 @@
   margin: auto;
 }
 
+.buy {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
 .submit {
   height: 15%;
   font-size: 2em;
